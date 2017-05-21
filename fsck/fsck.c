@@ -1992,7 +1992,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
 	}
 
 #ifndef WITH_ANDROID
-	if (nr_unref_nid && !c.ro) {
+	if (nr_unref_nid && !c.ro && !c.report_mode) {
 		char ans[255] = {0};
 
 		printf("\nDo you want to restore lost files into ./lost_found/? [Y/N] ");

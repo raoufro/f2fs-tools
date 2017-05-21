@@ -294,6 +294,7 @@ struct f2fs_configuration {
 	int preen_mode;
 	int ro;
 	__le32 feature;			/* defined features */
+	int report_mode;
 
 	/* defragmentation parameters */
 	int defrag_shrink;

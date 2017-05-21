@@ -29,6 +29,7 @@ void fsck_usage()
 	MSG(0, "  -d debug level [default:0]\n");
 	MSG(0, "  -f check/fix entire partition\n");
 	MSG(0, "  -p preen mode [default:0 the same as -a [0|1]]\n");
+	MSG(0, "  -r return error in case off2fs inconsistency\n");
 	MSG(0, "  -t show directory tree [-d -1]\n");
 	exit(1);
 }
@@ -116,7 +117,7 @@ void f2fs_parse_options(int argc, char *argv[])
 	argv[argc-- - 1] = 0;
 
 	if (!strcmp("fsck.f2fs", prog)) {
-		const char *option_string = ":ad:fp:t";
+		const char *option_string = ":ad:fp:rt";
 
 		c.func = FSCK;
 		while ((option = getopt(argc, argv, option_string)) != EOF) {
@@ -166,7 +167,9 @@ void f2fs_parse_options(int argc, char *argv[])
 			case 't':
 				c.dbg_lv = -1;
 				break;
-
+			case 'r':
+				c.report_mode = 1;
+				break;
 
 			case ':':
 				if (optopt == 'p') {
@@ -620,6 +623,8 @@ fsck_again:
 	f2fs_do_umount(sbi);
 
 	if (c.func == FSCK && c.bug_on) {
+		if (c.report_mode)
+			return -1;
 		if (!c.ro && c.fix_on == 0 && c.auto_fix == 0) {
 			char ans[255] = {0};
 retry:
